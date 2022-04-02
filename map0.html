@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+<head>
+<title>Tutoriel Google Maps</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso8859-1" />
+<!-- Elément Google Maps indiquant que la carte doit être affiché
+en plein écran et
+qu'elle ne peut pas être redimensionnée par l'utilisateur -->
+<meta name="viewport" content="initial-scale=1.0, userscalable=no" />
+<!-- Inclusion de l'API Google MAPS -->
+<!-- Le paramètre "sensor" indique si cette application utilise
+détecteur pour déterminer la position de l'utilisateur -->
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+function initialiser() {
+var latlng = new google.maps.LatLng(46.779231, 6.659431);
+//objet contenant des propriétés avec des identificateurs
+prédéfinis dans Google Maps permettant
+//de définir des options d'affichage de notre carte
+var options = {
+center: latlng,
+zoom: 19,
+mapTypeId: google.maps.MapTypeId.ROADMAP
+};
+//constructeur de la carte qui prend en paramêtre le conteneur HTML
+//dans lequel la carte doit s'afficher et les options
+var carte = new
+google.maps.Map(document.getElementById("carte"), options);
+}
+</script>
+</head>
+<body onload="initialiser()">
+<div id="carte" style="width:100%; height:100%" style="border-color: black;"></div>
+</body>
+<script type="text/javascript">
+var a=0.0,b=0.0,l=0.0;
+
+
+function maPosition(position) {
+  var infopos = "Position déterminée :\n";
+  infopos += "Latitude : "+position.coords.latitude +"\n";
+  a=position.coords.latitude;
+  infopos += "Longitude: "+position.coords.longitude+"\n";
+  b=position.coords.longitude;
+  infopos += "Altitude : "+position.coords.altitude +"\n";
+}
+
+if(navigator.geolocation)
+  navigator.geolocation.getCurrentPosition(maPosition);
+// Fonction de callback en cas de succès
+function surveillePosition(position) {
+    var infopos = "Position déterminée :\n";
+    infopos += "Latitude : "+position.coords.latitude +"\n";
+    infopos += "Longitude: "+position.coords.longitude+"\n";
+    infopos += "Altitude : "+position.coords.altitude +"\n";
+    infopos += "Vitesse  : "+position.coords.speed +"\n";
+    document.getElementById("infoposition").innerHTML = infopos;
+}
+
+// On déclare la variable survId afin de pouvoir par la suite annuler le suivi de la position
+var survId = navigator.geolocation.watchPosition(surveillePosition);
+// Fonction de callback en cas d’erreur
+function erreurPosition(error) {
+    var info = "Erreur lors de la géolocalisation : ";
+    switch(error.code) {
+    case error.TIMEOUT:
+    	info += "Timeout !";
+    break;
+    case error.PERMISSION_DENIED:
+	info += "Vous n’avez pas donné la permission";
+    break;
+    case error.POSITION_UNAVAILABLE:
+    	info += "La position n’a pu être déterminée";
+    break;
+    case error.UNKNOWN_ERROR:
+    	info += "Erreur inconnue";
+    break;
+    }
+}
+document.getElementById("infoposition").innerHTML = info;
+$.post("http://www.votredomaine.com/position.php",{lat:position.coords.latitude,lng:position.coords.longitude});
+$("#lat").val(position.coords.latitude); 
+$("#lng").val(position.coords.longitude);
+
+
+
+
+
+
+function initialiser() {
+var latlng = new google.maps.LatLng(a, b);
+var options = {
+center: latlng,
+zoom: 19,
+mapTypeId: google.maps.MapTypeId.ROADMAP
+};
+var carte = new google.maps.Map(document.getElementById("carte"),
+options);
+/****************Nouveau code****************/
+//création du marqueur
+var marqueur = new google.maps.Marker({
+position: new google.maps.LatLng(a, b),
+map: carte
+});
+/********************************************/
+}
+
+</script>
+</html>
